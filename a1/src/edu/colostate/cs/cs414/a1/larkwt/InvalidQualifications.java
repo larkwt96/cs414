@@ -7,7 +7,7 @@ public class InvalidQualifications extends Exception {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 732336536785829607L;
 

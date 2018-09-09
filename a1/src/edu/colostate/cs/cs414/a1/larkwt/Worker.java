@@ -3,7 +3,7 @@ package edu.colostate.cs.cs414.a1.larkwt;
 import java.util.HashSet;
 
 public class Worker {
-	
+
 	private String name;
 	private double salary;
 	private HashSet<Qualification> qs;
@@ -11,10 +11,29 @@ public class Worker {
 	private Company company;
 
 	/**
+	 * A valid name is non-empty and contains at least one non-whitespace
+	 * character.
+	 *
+	 * @param name the name to check. Assumes is non-null.
+	 * @return true if name is valid.
+	 */
+	private static boolean isValidName(String name) {
+		if (name.length() == 0) {
+			return false;
+		}
+		for (int i = 0; i < name.length(); i++) {
+			if (!Character.isWhitespace(name.charAt(i))) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * Creates a new worker with the given a valid name and qualifications. A
 	 * name is valid if it is a non-empty string that consists of at least one
 	 * non-blank character. Default salary is 0.
-	 * 
+	 *
 	 * @param name the name of the worker
 	 * @param qs the worker's qualifications
 	 * @throws NullPointerException if name or qs are null
@@ -27,7 +46,7 @@ public class Worker {
 			InvalidQualifications {
 		if (name == null) {
 			throw new NullPointerException("name must be non-null");
-		} else if (!Company.isValidName(name)) {
+		} else if (!isValidName(name)) {
 			throw new InvalidName("name is invalid");
 		} else if (qs == null) {
 			throw new NullPointerException("qs must be non-null");
@@ -38,26 +57,26 @@ public class Worker {
 		this.qs = new HashSet<Qualification>(qs);
 		this.projects = new HashSet<>();
 	}
-	
+
 	public String getName() {
 		return name;
 	}
-	
+
 	public double getSalary() {
 		return salary;
 	}
-	
+
 	public void setSalary(double salary) {
 		this.salary = salary;
 	}
-	
+
 	public HashSet<Qualification> getQualifications() {
 		return qs;
 	}
-	
+
 	/**
 	 * Adds the qualification q to the set of qualifications of the worker
-	 * 
+	 *
 	 * @param q the qualification to be added
 	 * @return true if the qualification was added; false otherwise
 	 * @throws NullPointerException if q is null
@@ -107,7 +126,7 @@ public class Worker {
 	public String toString() {
 		return name + ":" + projects.size() + ":" + qs.size() + ":" + salary;
 	}
-	
+
 	private int computeCurrentLoad() {
 		int size = 0;
 		for (Project p : getProjects()) {
@@ -115,16 +134,16 @@ public class Worker {
 		}
 		return size;
 	}
-	
+
 	private int getProjectLoad(ProjectSize size) {
 		switch(size) {
 		case LARGE: return 3;
 		case MEDIUM: return 2;
 		case SMALL: return 1;
-		default: return 1; // null case
+		default: return 0; // null case
 		}
 	}
-	
+
 	/**
 	 * Verifies if the worker will overload by assigning him to a project p. A
 	 * constraint for the entire system is that no worker should ever be
@@ -133,7 +152,7 @@ public class Worker {
 	 * worker makes (3*numberOfLargeProjects + 2*numberOfMediumProjects +
 	 * numberOfSmall Projects) greater than 12 when p becomes active, then the
 	 * worker will be overloaded.
-	 * 
+	 *
 	 * It's not clear whether "the current project set" from "adding a new
 	 * project p to the current project set" is referring to active project set.
 	 * If it's not, then we can overwork a worker by assigning it to 5 large
@@ -141,22 +160,23 @@ public class Worker {
 	 * assignment, overworked isn't triggered. Starting them doesn't perform any
 	 * checks for overworking. As such, I will assume that the project set
 	 * refers to all projects active and not.
-	 * 
+	 *
 	 * @param p the project
 	 * @return true if a worker will be overloaded when assigned to the project
 	 * p; false otherwise
 	 */
 	public boolean willOverload(Project p) {
-		return getProjectLoad(p.getSize()) + computeCurrentLoad() > 12;
+		ProjectSize pSize = (p == null ? null : p.getSize());
+		return getProjectLoad(pSize) + computeCurrentLoad() > 12;
 	}
-	
+
 	public HashSet<Project> getProjects() {
 		return projects;
 	}
-	
+
 	/**
 	 * Adds the project p to the set of projects of the worker.
-	 * 
+	 *
 	 * @param p the project
 	 * @throws NullPointerException if p is null
 	 */
@@ -166,19 +186,19 @@ public class Worker {
 		}
 		projects.add(p);
 	}
-	
+
 	/**
 	 * Sets the Company field
-	 * 
+	 *
 	 * @param c the company
 	 */
 	public void setCompany(Company company) {
 		this.company = company;
 	}
-	
+
 	/**
 	 * Returns the company
-	 * 
+	 *
 	 * @return the company
 	 */
 	public Company getCompany() {

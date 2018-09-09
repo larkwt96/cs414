@@ -1,0 +1,60 @@
+Overview
+Lucas Wilson
+
+--- Assumptions ---
+
+* Set vs HashSet
+I didn't fully understand "a Set should be implemented using a HashSet", so I
+made the assumption that returning Set meant returning HashSet.
+
+* willOverload assumption *
+tldr : willOverload considers all projects, not just those marked ACTIVE.
+full : The willOveload specification says, "To determine overloading, consider
+all the ACTIVE projects of the worker," which I interpret as don't use
+non-ACTIVE projects in the current load calculation. However, this implies that
+a worker can be assigned to projects, but those projects remain PLANNED. If they
+are PLANNED, they aren't considered in the willOverload formula, so as many
+projects as desired can be assigned even if it leads to willOverload.
+Company::start specification doesn't specify to check for worker overloading.
+Therefore, if those projects are then started, the worker can be overloaded. I
+assumed that this is undesirable and that in calculating a potential overload,
+all assigned projects are taken into consideration, not just those that are
+ACTIVE.
+
+* equal and hashCode assumption *
+I implemented equal according to the specification. For hashCode, it follows the
+rule that hashCodes match if (not necessarily iff) two objects are equal.
+
+--- Issues ---
+
+I'm not sure if I did TestAll.java correctly. It's configured how the resources
+recommended, but it seems like test suites don't exist in JUnit5 because it runs
+my test suite as JUnit4 (actually as JUnit5 with backwards compatibility
+support).
+
+tldr : if an entire suite fails, it's because one of my @BeforeEach methods is
+using some object behaving in a way that is against specification.
+full : In my @BeforeEach methods, I initialize objects to use for testing. Some
+of these objects could be untested or nonfunctional code. If that is the case,
+an exception or failure could occur. Note that this will only happen when
+specification isn't followed. @BeforeEach methods assume specification is
+followed. I decided to handle this by letting exceptions occur and be thrown to
+the calling method causing an error for the test. I interpreted this the same as
+a test failure. Further, if the issue is fixed, the @BeforeEach method functions
+properly, and the test continues as normal.
+
+--- Challenges ---
+
+The assignment didn't specify whether constructors should make a copy of data
+structures before assigning them to their private member variables, so I decided
+to make copies of the data structures using the copy constructors. For example,
+| this.qs = new HashSet<Qualification>(qs);
+This doesn't affect anything, and probably isn't important.
+
+It was difficult writing so many tests, but once they were written implementing
+the methods were stress free, so I see some value in test-driven development.
+
+It was also difficult figuring out the dependency of methods. I couldn't write 
+tests for some methods because they depended on other preconditions which felt
+like they should be created with other methods. For example, testing
+addQualification requires that the Qualification constructor works.

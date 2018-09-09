@@ -3,11 +3,30 @@ package edu.colostate.cs.cs414.a1.larkwt;
 import java.util.HashSet;
 
 public class Qualification {
-	
+
 	private String description;
 	private HashSet<Worker> workers;
 	private HashSet<Project> projects;
-	
+
+	/**
+	 * A valid name is non-empty and contains at least one non-whitespace
+	 * character.
+	 *
+	 * @param name the name to check. Assumes is non-null.
+	 * @return true if name is valid.
+	 */
+	private static boolean isValidName(String name) {
+		if (name.length() == 0) {
+			return false;
+		}
+		for (int i = 0; i < name.length(); i++) {
+			if (!Character.isWhitespace(name.charAt(i))) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	@Override
 	public String toString() {
 		return description;
@@ -39,27 +58,27 @@ public class Qualification {
 	 * Creates a new instance of qualification and sets its description, if the
 	 * description is valid. A valid description is a non-empty string that
 	 * consists of at least one non-blank character.
-	 * 
+	 *
 	 * @param description the description of the qualification
 	 * @throws InvalidDescription if description is not a non-empty string that
 	 * consists of at least one non-blank character.
 	 * @throws NullPointerException if description is null
-	 * @throws InvalidName 
+	 * @throws InvalidName
 	 */
 	public Qualification(String description) throws InvalidDescription, NullPointerException {
 		if (description == null) {
 			throw new NullPointerException("description can't be null");
-		} else if (!Company.isValidName(description)) {
+		} else if (!isValidName(description)) {
 			throw new InvalidDescription("invalid description");
 		}
 		this.description = description;
 		projects = new HashSet<>();
 		workers = new HashSet<>();
 	}
-	
+
 	/**
 	 * Adds the worker w to the Set of workers having the current qualification.
-	 * 
+	 *
 	 * @param worker the worker
 	 * @throws NullPointerException if worker is null
 	 */
@@ -69,11 +88,11 @@ public class Qualification {
 		}
 		workers.add(worker);
 	}
-	
+
 	/**
 	 * Adds the project p to the Set of projects requiring the current
 	 * qualification
-	 * 
+	 *
 	 * @param project the project
 	 * @throws NullPointerException if project is null
 	 */

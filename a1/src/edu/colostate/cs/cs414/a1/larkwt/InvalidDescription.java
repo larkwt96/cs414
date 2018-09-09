@@ -7,7 +7,7 @@ public class InvalidDescription extends Exception {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = -4689230386247337916L;
 
